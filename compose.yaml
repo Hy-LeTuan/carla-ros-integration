@@ -1,0 +1,42 @@
+services:
+  carla:
+    image: carlasim/carla:0.9.16
+    container_name: carla-container-compose
+    runtime: nvidia
+    network_mode: host
+    user: "${UID}:${GID}"
+    environment:
+      DISPLAY: "${DISPLAY}"
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: all
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    env_file: .env
+    command:
+      - bash
+      - -c
+      - |
+        args=("-nosound" "--ros2")
+        if [ "$$RENDER_OFF_SCREEN" = "true" ]; then
+          args+=("-RenderOffScreen")
+        fi
+        exec ./CarlaUE4.sh "$${args[@]}"
+    stdin_open: true
+    tty: true
+    restart: "no"
+
+  ros2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ros2-kilted-compose
+    network_mode: host
+    stdin_open: true
+    tty: true
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    environment:
+      ROS_DISTRO: kilted
+      ROS_DOMAIN_ID: "0"
+    command: bash

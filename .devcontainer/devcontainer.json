@@ -1,0 +1,7 @@
+{
+  "name": "CARLA ROS 2 Development",
+  "dockerComposeFile": "../compose.yaml",
+  "service": "ros2",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "none"
+}
